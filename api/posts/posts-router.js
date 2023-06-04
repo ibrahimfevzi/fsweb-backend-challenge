@@ -41,7 +41,9 @@ router.post(
       const newPost = await postModel.createPost(post);
       res.status(201).json(newPost);
     } catch (error) {
-      res.status(500).json({ message: "Post oluşturulurken bir hata oluştu." });
+      res
+        .status(500)
+        .json({ message: "Post oluşturulurken bir hata oluştu.", error });
     }
   }
 );

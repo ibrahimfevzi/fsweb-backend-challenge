@@ -14,7 +14,10 @@ exports.getUserById = async (userId) => {
 
 // Email'e göre bir kullanıcıyı veritabanından al
 exports.getUserByEmail = async (email) => {
-  const user = await db("users").where({ email }).first();
+  const user = await db("users")
+    .where({ email })
+    .first()
+    .select("user_id", "username", "email", "password");
   return user;
 };
 
@@ -36,4 +39,8 @@ exports.updateUser = async (userId, updatedUser) => {
 exports.deleteUser = async (userId) => {
   const deleted = await db("users").where({ user_id: userId }).del();
   return deleted;
+};
+
+exports.findBy = (field, value) => {
+  return db("users").where(field, value).first();
 };

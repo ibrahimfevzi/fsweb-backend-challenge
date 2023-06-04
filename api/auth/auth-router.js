@@ -3,95 +3,62 @@ const router = express.Router();
 const userModel = require("../users/users-model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { checkPayload, usernameVarmi } = require("./auth-middleware");
 
 const { JWT_SECRET } = require("../secrets/jwt-secret.js"); // bu secret'ı kullanarak token oluşturacağız
 
-// JWT oluşturmak için kullanılan fonksiyon
-function createToken(user) {
-  const payload = {
-    userId: user.user_id,
-    username: user.username,
-    email: user.email,
-  };
-
-  // Token'i oluştur ve döndür
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
-  return token;
-}
-
 // POST /auth/register
-router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
-
+router.post("/register", checkPayload, async (req, res, next) => {
   try {
-    // Kullanıcı doğrulama ve veri işleme işlemleri
-
-    // Şifreyi hashle
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Kullanıcıyı oluştur
-    const newUser = await userModel.createUser({
-      username,
-      email,
+    let hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    let userRequestModel = {
+      username: req.body.username,
       password: hashedPassword,
-    });
-
-    res.status(201).json(newUser);
+      email: req.body.email,
+    };
+    const registeredUser = await userModel.createUser(userRequestModel);
+    res.status(201).json(registeredUser);
   } catch (error) {
-    res.status(500).json({ message: "Kayıt oluşturulurken bir hata oluştu." });
+    next(error);
   }
 });
 
 // POST /auth/login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
+router.post("/login", checkPayload, usernameVarmi, (req, res, next) => {
   try {
-    // Kullanıcı doğrulama ve veri işleme işlemleri
-
-    // E-postaya göre kullanıcıyı al
-    const user = await userModel.getUserByEmail(email);
-    if (!user) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
-    }
-
-    // Şifreyi kontrol et
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: "Geçersiz parola." });
-    }
-
-    // Kullanıcı giriş işlemi başarılı
-    // JWT oluştur ve token'i yanıtla
-    const token = createToken(user);
-
-    res.status(202).json({ message: "Giriş başarılı.", token });
+    let payload = {
+      subject: req.currentUser.user_id,
+      username: req.currentUser.username,
+    };
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
+    res.json({
+      message: `${req.currentUser.username} logged in!...`,
+      token: token,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Giriş yapılırken bir hata oluştu." });
+    next(error);
   }
 });
+router.get("/logout", (req, res, next) => {
+  const token = req.headers.authorization;
 
-// GET /auth/logout
-router.get("/logout", async (req, res) => {
-  try {
-    // Kullanıcının token'ını al
-    const token = req.headers.authorization.split(" ")[1];
+  if (token) {
+    try {
+      jwt.verify(token, JWT_SECRET); // Verify the token
 
-    // Token'ı "token blacklist"e ekle
-    await addToBlacklist(token);
+      // Token is valid, perform logout action
+      res.clearCookie("token"); // Clear the token cookie
 
-    res.json({ message: "Oturum başarıyla sonlandırıldı." });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Oturum sonlandırma işleminde bir hata oluştu." });
+      res.json({
+        message: "Yine bekleriz!...",
+        clearToken: true, // Add a flag to indicate clearing the token on the client-side
+      });
+    } catch (error) {
+      next({ status: 400, message: "Token is not valid!..." });
+    }
+  } else {
+    next({ status: 400, message: "Token is not provided!..." });
   }
 });
-
-// Token'ı "token blacklist"e ekleme işlemi
-async function addToBlacklist(token) {
-  // Token'ı saklayacağımız veritabanı tablosuna veya "token blacklist"e ekleme işlemini gerçekleştireceğimiz başka bir servise bağlan
-  // Örneğin: await blacklistModel.create({ token });
-}
 
 module.exports = router;
