@@ -74,7 +74,6 @@ router.post("/login", async (req, res) => {
 // GET /auth/logout
 router.get("/logout", (req, res) => {
   // Oturumu sonlandırma işlemleri
-
   res.json({ message: "Oturum başarıyla sonlandırıldı." });
 });
 

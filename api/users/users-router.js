@@ -79,19 +79,25 @@ router.put("/:id", authMiddleware.authenticate, async (req, res) => {
 });
 
 // DELETE /users/:id
-router.delete("/:id", authMiddleware.authenticate, async (req, res) => {
-  const userId = req.params.id;
+router.delete(
+  "/:id",
+  // authMiddleware.authenticate,
+  async (req, res) => {
+    const userId = req.params.id;
 
-  try {
-    const deletedUser = await userModel.deleteUser(userId);
-    if (deletedUser) {
-      res.json({ message: "Kullanıcı başarıyla silindi." });
-    } else {
-      res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    try {
+      const deletedUser = await userModel.deleteUser(userId);
+      if (deletedUser) {
+        res.json({ message: "Kullanıcı başarıyla silindi." });
+      } else {
+        res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Kullanıcı silinirken bir hata oluştu." });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Kullanıcı silinirken bir hata oluştu." });
   }
-});
+);
 
 module.exports = router;
