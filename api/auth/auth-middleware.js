@@ -3,18 +3,17 @@ const userModel = require("../users/users-model");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcrypt");
 
-const sinirli = (req, res, next) => {
+const limited = (req, res, next) => {
   try {
     let authHeader = req.headers["authorization"];
     if (!authHeader) {
-      res.status(401).json({ message: "Token gereklidir" });
+      return res.status(401).json({ message: "Token gereklidir" });
     } else {
       jwt.verify(authHeader, JWT_SECRET, (err, decodedToken) => {
         if (err) {
-          res.status(401).json({ message: "Token gecersizdir" });
+          return res.status(401).json({ message: "Token geçersizdir" });
         } else {
-          req.username = decodedToken.username; // Kullanıcı adını burada alıyoruz
-
+          req.user_id = decodedToken.userId; // Kullanıcı kimliğini burada alıyoruz
           next();
         }
       });
@@ -65,7 +64,7 @@ const checkPayload = (req, res, next) => {
 };
 
 module.exports = {
-  sinirli,
+  limited,
   usernameVarmi,
   checkPayload,
 };

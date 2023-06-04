@@ -50,7 +50,7 @@ router.get("/logout", (req, res, next) => {
       res.clearCookie("token"); // Clear the token cookie
 
       res.json({
-        message: "Yine bekleriz!...",
+        message: "Yine  bekleriz!...",
         clearToken: true, // Add a flag to indicate clearing the token on the client-side
       });
     } catch (error) {

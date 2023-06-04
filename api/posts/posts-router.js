@@ -30,23 +30,19 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /posts
-router.post(
-  "/",
-  //   authMiddleware.authenticate,
-  async (req, res) => {
-    const { content } = req.body;
-    const { user_id } = req.token;
-    const post = { content, user_id };
-    try {
-      const newPost = await postModel.createPost(post);
-      res.status(201).json(newPost);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Post oluşturulurken bir hata oluştu.", error });
-    }
+// POST /posts
+router.post("/", authMiddleware.limited, async (req, res) => {
+  const { content } = req.body;
+  const post = { content, user_id: req.user_id }; // req.user_id'yi kullanarak user_id'yi ayarlayın
+  try {
+    const newPost = await postModel.createPost(post);
+    res.status(201).json(newPost);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Post oluşturulurken bir hata oluştu.", error });
   }
-);
+});
 
 // PUT /posts/:id
 router.put(
