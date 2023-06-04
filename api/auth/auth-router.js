@@ -65,16 +65,33 @@ router.post("/login", async (req, res) => {
     // JWT oluştur ve token'i yanıtla
     const token = createToken(user);
 
-    res.json({ token });
+    res.status(202).json({ message: "Giriş başarılı.", token });
   } catch (error) {
     res.status(500).json({ message: "Giriş yapılırken bir hata oluştu." });
   }
 });
 
 // GET /auth/logout
-router.get("/logout", (req, res) => {
-  // Oturumu sonlandırma işlemleri
-  res.json({ message: "Oturum başarıyla sonlandırıldı." });
+router.get("/logout", async (req, res) => {
+  try {
+    // Kullanıcının token'ını al
+    const token = req.headers.authorization.split(" ")[1];
+
+    // Token'ı "token blacklist"e ekle
+    await addToBlacklist(token);
+
+    res.json({ message: "Oturum başarıyla sonlandırıldı." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Oturum sonlandırma işleminde bir hata oluştu." });
+  }
 });
+
+// Token'ı "token blacklist"e ekleme işlemi
+async function addToBlacklist(token) {
+  // Token'ı saklayacağımız veritabanı tablosuna veya "token blacklist"e ekleme işlemini gerçekleştireceğimiz başka bir servise bağlan
+  // Örneğin: await blacklistModel.create({ token });
+}
 
 module.exports = router;

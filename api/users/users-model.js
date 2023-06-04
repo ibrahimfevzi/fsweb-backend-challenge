@@ -12,6 +12,12 @@ exports.getUserById = async (userId) => {
   return user;
 };
 
+// Email'e göre bir kullanıcıyı veritabanından al
+exports.getUserByEmail = async (email) => {
+  const user = await db("users").where({ email }).first();
+  return user;
+};
+
 // Yeni bir kullanıcı oluştur
 exports.createUser = async (user) => {
   const createdUser = await db("users").insert(user).returning("*");
