@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET /comments/:id
-router.get("/:id", commentModel.getCommentById, async (req, res) => {
+router.get("/:id", async (req, res) => {
   const commentId = req.params.id;
   try {
     const comment = await commentModel.getCommentById(commentId);
@@ -32,7 +32,6 @@ router.get("/:id", commentModel.getCommentById, async (req, res) => {
 router.post(
   "/",
   //   authMiddleware.authenticate,
-  commentModel.createComment,
   async (req, res) => {
     const { content } = req.body;
     const { user_id } = req.token;
@@ -53,7 +52,6 @@ router.post(
 router.put(
   "/:id",
   //   authMiddleware.authenticate,
-  commentModel.updateComment,
   async (req, res) => {
     const commentId = req.params.id;
     const { content } = req.body;
@@ -78,7 +76,6 @@ router.put(
 router.delete(
   "/:id",
   //   authMiddleware.authenticate,
-  commentModel.deleteComment,
   async (req, res) => {
     const commentId = req.params.id;
     try {

@@ -33,7 +33,6 @@ router.get("/:id", async (req, res) => {
 router.post(
   "/",
   //   authMiddleware.authenticate,
-  postModel.createPost,
   async (req, res) => {
     const { content } = req.body;
     const { user_id } = req.token;
@@ -51,7 +50,6 @@ router.post(
 router.put(
   "/:id",
   //   authMiddleware.authenticate,
-  postModel.updatePost,
   async (req, res) => {
     const postId = req.params.id;
     const { content } = req.body;
@@ -67,19 +65,14 @@ router.put(
 );
 
 // DELETE /posts/:id
-router.delete(
-  "/:id",
-  //   authMiddleware.authenticate,
-  postModel.deletePost,
-  async (req, res) => {
-    const postId = req.params.id;
-    try {
-      const deletedPost = await postModel.deletePost(postId);
-      res.json(deletedPost);
-    } catch (error) {
-      res.status(500).json({ message: "Post silinirken bir hata oluştu." });
-    }
+router.delete("/:id", async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const deletedPost = await postModel.deletePost(postId);
+    res.json(deletedPost);
+  } catch (error) {
+    res.status(500).json({ message: "Post silinirken bir hata oluştu." });
   }
-);
+});
 
 module.exports = router;
