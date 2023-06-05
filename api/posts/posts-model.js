@@ -20,14 +20,14 @@ exports.createPost = async (post) => {
 
 // Bir postu güncelle
 exports.updatePost = async (postId, updatedPost) => {
-  const updated = await db("posts")
-    .where({ post_id: postId })
-    .update(updatedPost);
+  await db("posts").where({ post_id: postId }).update(updatedPost);
+  const updated = await db("posts").where({ post_id: postId }).first();
   return updated;
 };
 
 // Bir postu sil
 exports.deletePost = async (postId) => {
-  const deleted = await db("posts").where({ post_id: postId }).del();
+  await db("posts").where({ post_id: postId }).del();
+  const deleted = await db("posts").where({ post_id: postId }).first();
   return deleted;
 };

@@ -45,25 +45,21 @@ router.post("/", limited, async (req, res) => {
 });
 
 // PUT /posts/:id
-router.put(
-  "/:id",
-  //   authMiddleware.authenticate,
-  async (req, res) => {
-    const postId = req.params.id;
-    const { content } = req.body;
-    const { user_id } = req.token;
-    const post = { content, user_id };
-    try {
-      const updatedPost = await postModel.updatePost(postId, post);
-      res.json(updatedPost);
-    } catch (error) {
-      res.status(500).json({ message: "Post güncellenirken bir hata oluştu." });
-    }
+router.put("/:id", limited, async (req, res) => {
+  const postId = req.params.id;
+  const { content } = req.body;
+  const { user_id } = req.decodedToken.subject;
+  const post = { content, user_id };
+  try {
+    const updatedPost = await postModel.updatePost(postId, post);
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: "Post güncellenirken bir hata oluştu." });
   }
-);
+});
 
 // DELETE /posts/:id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", limited, async (req, res) => {
   const postId = req.params.id;
   try {
     const deletedPost = await postModel.deletePost(postId);
