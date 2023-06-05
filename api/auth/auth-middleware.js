@@ -13,7 +13,7 @@ const limited = (req, res, next) => {
         if (err) {
           return res.status(401).json({ message: "Token geçersizdir" });
         } else {
-          req.user_id = decodedToken.userId; // Kullanıcı kimliğini burada alıyoruz
+          req.decodedToken = decodedToken; // Kullanıcı kimliğini burada alıyoruz
           next();
         }
       });

@@ -39,26 +39,18 @@ router.post("/login", checkPayload, usernameVarmi, (req, res, next) => {
     next(error);
   }
 });
+
 router.get("/logout", (req, res, next) => {
-  const token = req.headers.authorization;
+  // Token'in geçersiz hale gelmesi için süre sonunu daha kısa bir süre olarak ayarlayabilirsiniz
+  const expirationTime = 1; // Örneğin, 1 dakika
 
-  if (token) {
-    try {
-      jwt.verify(token, JWT_SECRET); // Verify the token
+  // Token'in süresini geçmiş bir tarihe ayarlayarak logout işlemini gerçekleştirir
+  res.cookie("token", "", { expires: new Date(Date.now() - expirationTime) });
 
-      // Token is valid, perform logout action
-      res.clearCookie("token"); // Clear the token cookie
-
-      res.json({
-        message: "Yine  bekleriz!...",
-        clearToken: true, // Add a flag to indicate clearing the token on the client-side
-      });
-    } catch (error) {
-      next({ status: 400, message: "Token is not valid!..." });
-    }
-  } else {
-    next({ status: 400, message: "Token is not provided!..." });
-  }
+  res.json({
+    message: "Yine bekleriz!...",
+    logout: true,
+  });
 });
 
 module.exports = router;

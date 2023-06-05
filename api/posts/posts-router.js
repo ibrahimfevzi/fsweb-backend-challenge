@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const postModel = require("./posts-model");
-const authMiddleware = require("../auth/auth-middleware");
+const { limited } = require("../auth/auth-middleware");
 
 // GET /posts
 
@@ -31,9 +31,9 @@ router.get("/:id", async (req, res) => {
 
 // POST /posts
 // POST /posts
-router.post("/", authMiddleware.limited, async (req, res) => {
+router.post("/", limited, async (req, res) => {
   const { content } = req.body;
-  const post = { content, user_id: req.user_id }; // req.user_id'yi kullanarak user_id'yi ayarlayın
+  const post = { content, user_id: req.decodedToken.subject }; // req.user_id'yi kullanarak user_id'yi ayarlayın
   try {
     const newPost = await postModel.createPost(post);
     res.status(201).json(newPost);

@@ -14,8 +14,8 @@ exports.getPostById = async (postId) => {
 
 // Yeni bir post oluştur
 exports.createPost = async (post) => {
-  const [createdPost] = await db("posts").insert(post).returning("*");
-  return createdPost;
+  const [createdPost] = await db("posts").insert(post);
+  return this.getPostById(createdPost);
 };
 
 // Bir postu güncelle
