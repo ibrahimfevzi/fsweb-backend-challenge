@@ -52,7 +52,7 @@ router.put("/:id", limited, async (req, res) => {
   const post = { content, user_id };
   try {
     const updatedPost = await postModel.updatePost(postId, post);
-    res.json(updatedPost);
+    res.status(200).json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: "Post güncellenirken bir hata oluştu." });
   }
@@ -63,7 +63,7 @@ router.delete("/:id", limited, async (req, res) => {
   const postId = req.params.id;
   try {
     const deletedPost = await postModel.deletePost(postId);
-    res.json(deletedPost);
+    res.status(200).json(deletedPost);
   } catch (error) {
     res.status(500).json({ message: "Post silinirken bir hata oluştu." });
   }

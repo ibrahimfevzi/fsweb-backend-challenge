@@ -20,14 +20,14 @@ exports.createComment = async (comment) => {
 
 // Bir yorumu güncelle
 exports.updateComment = async (commentId, updatedComment) => {
-  const updated = await db("comments")
-    .where({ comment_id: commentId })
-    .update(updatedComment);
+  await db("comments").where({ comment_id: commentId }).update(updatedComment);
+  const updated = await db("comments").where({ comment_id: commentId }).first();
   return updated;
 };
 
 // Bir yorumu sil
 exports.deleteComment = async (commentId) => {
-  const deleted = await db("comments").where({ comment_id: commentId }).del();
+  await db("comments").where({ comment_id: commentId }).del();
+  const deleted = await db("comments").where({ comment_id: commentId }).first();
   return deleted;
 };

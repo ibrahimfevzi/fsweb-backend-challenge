@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const commentModel = require("./comments-model");
-const authMiddleware = require("../auth/auth-middleware");
+const { limited } = require("../auth/auth-middleware");
 
 // GET /comments
 router.get("/", async (req, res) => {
@@ -29,62 +29,47 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /comments
-router.post(
-  "/",
-  //   authMiddleware.authenticate,
-  async (req, res) => {
-    const { content } = req.body;
-    const { user_id } = req.token;
-    const { post_id } = req.body;
-    const comment = { content, user_id, post_id };
-    try {
-      const newComment = await commentModel.createComment(comment);
-      res.status(201).json(newComment);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Yorum oluşturulurken bir hata oluştu." });
-    }
+router.post("/", limited, async (req, res) => {
+  const { content } = req.body;
+  const comment = {
+    content,
+    user_id: req.decodedToken.subject,
+    post_id: req.body.post_id,
+  };
+  try {
+    const newComment = await commentModel.createComment(comment);
+    res.status(201).json(newComment);
+  } catch (error) {
+    res.status(500).json({ message: "Yorum oluşturulurken bir hata oluştu." });
   }
-);
+});
 
 // PUT /comments/:id
-router.put(
-  "/:id",
-  //   authMiddleware.authenticate,
-  async (req, res) => {
-    const commentId = req.params.id;
-    const { content } = req.body;
-    const { user_id } = req.token;
-    const { post_id } = req.body;
-    const comment = { content, user_id, post_id };
-    try {
-      const updatedComment = await commentModel.updateComment(
-        commentId,
-        comment
-      );
-      res.status(200).json(updatedComment);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Yorum güncellenirken bir hata oluştu." });
-    }
+router.put("/:id", limited, async (req, res) => {
+  const commentId = req.params.id;
+  const { content } = req.body;
+  const comment = {
+    content,
+    user_id: req.decodedToken.subject,
+    post_id: req.body.post_id,
+  };
+  try {
+    const updatedComment = await commentModel.updateComment(commentId, comment);
+    res.status(200).json(updatedComment);
+  } catch (error) {
+    res.status(500).json({ message: "Yorum güncellenirken bir hata oluştu." });
   }
-);
+});
 
 // DELETE /comments/:id
-router.delete(
-  "/:id",
-  //   authMiddleware.authenticate,
-  async (req, res) => {
-    const commentId = req.params.id;
-    try {
-      const deletedComment = await commentModel.deleteComment(commentId);
-      res.status(200).json(deletedComment);
-    } catch (error) {
-      res.status(500).json({ message: "Yorum silinirken bir hata oluştu." });
-    }
+router.delete("/:id", limited, async (req, res) => {
+  const commentId = req.params.id;
+  try {
+    const deletedComment = await commentModel.deleteComment(commentId);
+    res.status(200).json(deletedComment);
+  } catch (error) {
+    res.status(500).json({ message: "Yorum silinirken bir hata oluştu." });
   }
-);
+});
 
 module.exports = router;
