@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require("./users-model");
-const authMiddleware = require("../auth/auth-middleware");
+const { limited } = require("../auth/auth-middleware");
 
 // GET /users
 router.get("/", async (req, res) => {
@@ -34,25 +34,19 @@ router.get("/:id", async (req, res) => {
 });
 
 // DELETE /users/:id
-router.delete(
-  "/:id",
-  // authMiddleware.authenticate,
-  async (req, res) => {
-    const userId = req.params.id;
+router.delete("/:id", limited, async (req, res) => {
+  const userId = req.params.id;
 
-    try {
-      const deletedUser = await userModel.deleteUser(userId);
-      if (deletedUser) {
-        res.json({ message: "Kullanıcı başarıyla silindi." });
-      } else {
-        res.status(404).json({ message: "Kullanıcı bulunamadı." });
-      }
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Kullanıcı silinirken bir hata oluştu." });
+  try {
+    const deletedUser = await userModel.deleteUser(userId);
+    if (deletedUser) {
+      res.json({ message: "Kullanıcı başarıyla silindi." });
+    } else {
+      res.status(404).json({ message: "Kullanıcı bulunamadı." });
     }
+  } catch (error) {
+    res.status(500).json({ message: "Kullanıcı silinirken bir hata oluştu." });
   }
-);
+});
 
 module.exports = router;

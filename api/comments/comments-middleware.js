@@ -1,27 +1,24 @@
-// Örnek bir yorum doğrulama işlevi
-exports.validateComment = (req, res, next) => {
-  // Yorumu doğrula
-  // ...
+// content validation
+const validateComment = (req, res, next) => {
+  const { content, post_id } = req.body;
 
-  if (valid) {
-    // Yorum doğrulandı, devam et
-    next();
+  //yorum içeriği boş olamaz, post_id girilmeli,  içerik yoksa ve string değilse ve içerik boşsa hata döndür ve karakter sayısı 280 karakterden fazla olamaz
+  if (!post_id || !content || typeof content !== "string" || !content.trim()) {
+    res
+      .status(400)
+      .json({
+        message:
+          "Yorum içeriği ve yorum yazılacak post'a ait post_id gereklidir.",
+      });
+  } else if (content.length > 280) {
+    res
+      .status(400)
+      .json({ message: "Yorum içeriği 280 karakterden fazla olamaz." });
   } else {
-    // Yorum doğrulanmadı, hata döndür
-    res.status(400).json({ message: "Geçersiz yorum verisi." });
+    next();
   }
 };
 
-// Örnek bir yorum yetkilendirme işlevi
-exports.authorizeComment = (req, res, next) => {
-  // Yorumu yetkilendir
-  // ...
-
-  if (authorized) {
-    // Yorum yetkilendirildi, devam et
-    next();
-  } else {
-    // Yorum yetkilendirilmedi, hata döndür
-    res.status(403).json({ message: "Yorum yetkilendirilmedi." });
-  }
+module.exports = {
+  validateComment,
 };

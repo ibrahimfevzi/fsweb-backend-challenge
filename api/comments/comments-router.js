@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const commentModel = require("./comments-model");
 const { limited } = require("../auth/auth-middleware");
+const { validateComment } = require("./comments-middleware");
 
 // GET /comments
 router.get("/", async (req, res) => {
@@ -28,8 +29,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// GET /comments/posts/:postId // Post ID'ye göre yorumları getir
+router.get("/posts/:postId", async (req, res) => {
+  const postId = req.params.postId;
+  try {
+    const comments = await commentModel.getCommentsByPostId(postId);
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ message: "Yorumları getirirken bir hata oluştu." });
+  }
+});
+
 // POST /comments
-router.post("/", limited, async (req, res) => {
+router.post("/", limited, validateComment, async (req, res) => {
   const { content } = req.body;
   const comment = {
     content,
@@ -45,7 +57,7 @@ router.post("/", limited, async (req, res) => {
 });
 
 // PUT /comments/:id
-router.put("/:id", limited, async (req, res) => {
+router.put("/:id", limited, validateComment, async (req, res) => {
   const commentId = req.params.id;
   const { content } = req.body;
   const comment = {

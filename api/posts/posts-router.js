@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const postModel = require("./posts-model");
 const { limited } = require("../auth/auth-middleware");
+const { validatePost } = require("./posts-middleware");
 
 // GET /posts
 
@@ -29,23 +30,8 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// POST /posts
-// POST /posts
-router.post("/", limited, async (req, res) => {
-  const { content } = req.body;
-  const post = { content, user_id: req.decodedToken.subject }; // req.user_id'yi kullanarak user_id'yi ayarlayın
-  try {
-    const newPost = await postModel.createPost(post);
-    res.status(201).json(newPost);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Post oluşturulurken bir hata oluştu.", error });
-  }
-});
-
 // PUT /posts/:id
-router.put("/:id", limited, async (req, res) => {
+router.put("/:id", limited, validatePost, async (req, res) => {
   const postId = req.params.id;
   const { content } = req.body;
   const { user_id } = req.decodedToken.subject;

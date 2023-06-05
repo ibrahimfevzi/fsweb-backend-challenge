@@ -12,6 +12,12 @@ exports.getCommentById = async (commentId) => {
   return comment;
 };
 
+// Post ID'ye göre yorumları veritabanından al
+exports.getCommentsByPostId = async (postId) => {
+  const comments = await db("comments").where("post_id", postId).select("*");
+  return comments;
+};
+
 // Yeni bir yorum oluştur
 exports.createComment = async (comment) => {
   const createdComment = await db("comments").insert(comment).returning("*");
