@@ -47,8 +47,15 @@ router.get("/", limited, async (req, res) => {
 
     // Tüm postlar için döngü oluşturdum
     for (const post of posts) {
-      const { post_id, content } = post;
-      groupedPosts[post_id] = { post_id, content, comments: [] };
+      const { post_id, user_id, content, created_at, likes_count } = post;
+      groupedPosts[post_id] = {
+        post_id,
+        user_id,
+        content,
+        created_at,
+        likes_count,
+        comments: [],
+      };
 
       // İlgili yorumları bulup  posta ekledim
       const postComments = comments.filter(
@@ -79,7 +86,10 @@ router.get("/:postId", limited, async (req, res) => {
 
     const response = {
       post_id: post.post_id,
+      user_id: post.user_id,
       content: post.content,
+      created_at: post.created_at,
+      likes_count: post.likes_count,
       comments: comments,
     };
 
