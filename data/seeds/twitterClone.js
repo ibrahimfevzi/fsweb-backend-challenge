@@ -16,21 +16,21 @@ exports.seed = async function (knex) {
       username: "ibrahim",
       password: "1234",
       email: "ibrahim@example.com",
-      avatar: "avatar1.jpg",
+      avatar: "https://avatars.githubusercontent.com/%3Cibrahim%3E",
     },
     {
       user_id: 2,
       username: "kerem",
       password: "1234",
       email: "kerem@example.com",
-      avatar: "avatar2.jpg",
+      avatar: "https://avatars.githubusercontent.com/%3Cibrahim%3E",
     },
     {
       user_id: 3,
       username: "mark",
       password: "password3",
       email: "mark@example.com",
-      avatar: "avatar3.jpg",
+      avatar: "https://avatars.githubusercontent.com/%3Cibrahim%3E",
     },
   ]);
 
