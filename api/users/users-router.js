@@ -49,4 +49,25 @@ router.delete("/:id", limited, async (req, res) => {
   }
 });
 
+// PUT /users/:id
+
+router.put("/:id", limited, async (req, res) => {
+  const userId = req.params.id;
+  const { username, password } = req.body;
+  const user = { username, password };
+
+  try {
+    const updatedUser = await userModel.updateUser(userId, user);
+    if (updatedUser) {
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Kullanıcı güncellenirken bir hata oluştu." });
+  }
+});
+
 module.exports = router;

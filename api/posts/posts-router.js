@@ -9,7 +9,10 @@ const { validatePost } = require("./posts-middleware");
 router.get("/", async (req, res) => {
   try {
     const posts = await postModel.getAllPosts();
-    res.json(posts);
+    const sortedPosts = posts
+      .sort((a, b) => b.created_at - a.created_at)
+      .reverse();
+    res.json(sortedPosts);
   } catch (error) {
     res.status(500).json({ message: "Postları getirirken bir hata oluştu." });
   }
@@ -27,6 +30,20 @@ router.get("/:id", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Postu getirirken bir hata oluştu." });
+  }
+});
+
+// POST /posts
+router.post("/", limited, async (req, res) => {
+  const { content } = req.body;
+  const post = { content, user_id: req.decodedToken.subject };
+  try {
+    const newPost = await postModel.createPost(post);
+    res.status(201).json(newPost);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Post oluşturulurken bir hata oluştu.", error });
   }
 });
 
