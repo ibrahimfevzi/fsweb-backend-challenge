@@ -30,7 +30,7 @@ router.post("/login", checkPayload, usernameVarmi, (req, res, next) => {
       subject: req.currentUser.user_id,
       username: req.currentUser.username,
     };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1y" });
     res.json({
       message: `${req.currentUser.username} logged in!...`,
       token: token,
