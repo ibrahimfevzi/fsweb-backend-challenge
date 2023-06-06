@@ -24,14 +24,16 @@ exports.seed = async function (knex) {
       username: "kerem",
       password: "1234",
       email: "kerem@example.com",
-      avatar: "https://avatars.githubusercontent.com/%3Cibrahim%3E",
+      avatar:
+        "https://github.com/ibrahimfevzi/fsweb-backend-challenge/blob/main/assets/kerem.png?raw=true",
     },
     {
       user_id: 3,
       username: "mark",
       password: "password3",
       email: "mark@example.com",
-      avatar: "https://avatars.githubusercontent.com/%3Cibrahim%3E",
+      avatar:
+        "https://media.npr.org/assets/artslife/arts/2010/11/mark-twain/mark-twain-6fa45e42400eea8cac3953cb267d66a33825a370-s1100-c50.jpg",
     },
   ]);
 
