@@ -17,7 +17,7 @@ exports.seed = async function (knex) {
       password: "1234",
       email: "ibrahim@example.com",
       avatar:
-        "https://github.com/ibrahimfevzi/fsweb-backend-challenge/blob/main/assets/avatar1.PNG",
+        "https://raw.githubusercontent.com/ibrahimfevzi/fsweb-backend-challenge/main/assets/avatar1.jpg",
     },
     {
       user_id: 2,
