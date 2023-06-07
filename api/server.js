@@ -3,6 +3,7 @@ const server = express();
 const usersRouter = require("./users/users-router");
 const authRouter = require("./auth/auth-router");
 const commentsRouter = require("./comments/comments-router");
+const likesRouter = require("./likes/likes-router");
 const postsRouter = require("./posts/posts-router");
 const postsCommentsRouter = require("./posts/posts-comments-router");
 const helmet = require("helmet");
@@ -21,6 +22,7 @@ server.use("/api/auth", authRouter);
 server.use("/api/comments", commentsRouter);
 server.use("/api/posts", postsRouter);
 server.use("/api/posts-comments", postsCommentsRouter);
+server.use("/api/likes", likesRouter);
 
 //error handling middleware
 

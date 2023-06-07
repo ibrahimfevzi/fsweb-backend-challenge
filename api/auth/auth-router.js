@@ -15,6 +15,7 @@ router.post("/register", checkPayload, async (req, res, next) => {
       username: req.body.username,
       password: hashedPassword,
       email: req.body.email,
+      avatar: req.body.avatar,
     };
     const registeredUser = await userModel.createUser(userRequestModel);
     res.status(201).json(registeredUser);
