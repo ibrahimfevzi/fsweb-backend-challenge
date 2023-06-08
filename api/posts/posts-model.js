@@ -2,7 +2,7 @@ const db = require("../../data/db-config");
 
 // Tüm postları veritabanından al
 exports.getAllPosts = async () => {
-  const posts = await db("posts").select("*");
+  const posts = await db("posts");
   return posts;
 };
 
@@ -27,7 +27,6 @@ exports.updatePost = async (postId, updatedPost) => {
 
 // Bir postu sil
 exports.deletePost = async (postId) => {
-  await db("posts").where({ post_id: postId }).del();
-  const deleted = await db("posts").where({ post_id: postId }).first();
+  const deleted = await db("posts").where({ post_id: postId }).del();
   return deleted;
 };

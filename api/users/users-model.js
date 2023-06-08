@@ -44,3 +44,4 @@ exports.deleteUser = async (userId) => {
 exports.findBy = (field, value) => {
   return db("users").where(field, value).first();
 };
+

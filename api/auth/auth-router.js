@@ -41,7 +41,7 @@ router.post("/login", checkPayload, usernameVarmi, (req, res, next) => {
   }
 });
 
-router.get("/logout", (req, res, next) => {
+router.get("/logout", (req, res) => {
   // Token'in geçersiz hale gelmesi için süre sonunu daha kısa bir süre olarak ayarlayabilirsiniz
   const expirationTime = 1; // Örneğin, 1 dakika
 

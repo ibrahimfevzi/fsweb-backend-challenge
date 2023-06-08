@@ -62,14 +62,23 @@ router.put("/:id", limited, validatePost, async (req, res) => {
 });
 
 // DELETE /posts/:id
-router.delete("/:id", limited, async (req, res) => {
+router.delete("/:id", limited, async (req, res, next) => {
   const postId = req.params.id;
   try {
     const deletedPost = await postModel.deletePost(postId);
     res.status(200).json(deletedPost);
   } catch (error) {
-    res.status(500).json({ message: "Post silinirken bir hata oluştu." });
+    next(error);
   }
 });
+
+//   const postId = req.params.id;
+//   try {
+//     const deletedPost = await postModel.deletePost(postId);
+//     res.status(200).json(deletedPost);
+//   } catch (error) {
+//     res.status(500).json({ message: "Post silinirken bir hata oluştu." });
+//   }
+// });
 
 module.exports = router;

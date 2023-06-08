@@ -18,6 +18,7 @@ exports.up = function (knex) {
       table.foreign("user_id").references("user_id").inTable("users");
       table.text("content").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now());
+      table.integer("likes_count").defaultTo(0);
     })
     .createTable("comments", function (table) {
       table.increments("comment_id").primary();
@@ -27,6 +28,7 @@ exports.up = function (knex) {
       table.foreign("post_id").references("post_id").inTable("posts");
       table.text("content").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now());
+      table.integer("likes_count").defaultTo(0);
     })
     .createTable("likes", function (table) {
       table.increments("like_id").primary();

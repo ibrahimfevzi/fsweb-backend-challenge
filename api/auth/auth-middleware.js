@@ -28,7 +28,14 @@ const usernameVarmi = async (req, res, next) => {
     let { username, password } = req.body;
     const user = await userModel.findBy({ username: username });
     if (user) {
-      const passwordValid = await bcryptjs.compare(password, user.password);
+      let passwordValid = false;
+      if (user.password.startsWith("$2a$")) {
+        // The password is already hashed
+        passwordValid = await bcryptjs.compare(password, user.password);
+      } else {
+        // The password is unhashed, compare as plain text
+        passwordValid = password === user.password;
+      }
       if (passwordValid) {
         req.currentUser = user;
         next();

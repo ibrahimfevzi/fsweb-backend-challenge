@@ -25,6 +25,12 @@ server.use("/api/posts-comments", postsCommentsRouter);
 server.use("/api/likes", likesRouter);
 
 //error handling middleware
+server.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    message: err.message,
+    stack: err.stack,
+  });
+});
 
 //export
 module.exports = server;

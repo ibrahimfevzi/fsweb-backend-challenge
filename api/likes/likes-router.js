@@ -1,36 +1,33 @@
-//post veya comment için like butonuna basıldığında like sayısını arttırmak için likes tablosuna yeni bir kayıt eklememiz gerekiyor.
-
-//likes tablosuna yeni bir kayıt eklemek için likes-model.js dosyasında createLike fonksiyonunu oluşturuyoruz.
-
 const express = require("express");
 const router = express.Router();
 const likeModel = require("./likes-model");
 const { limited } = require("../auth/auth-middleware");
+const errorHandler = require("./likes-middleware");
 
 // GET /likes/:postId
-router.get("/:postId", limited, async (req, res) => {
+router.get("/:postId", limited, async (req, res, next) => {
   const postId = req.params.postId;
   try {
     const likes = await likeModel.getLikesByPostId(postId);
     res.json(likes);
   } catch (error) {
-    res.status(500).json({ message: "Beğenileri getirirken bir hata oluştu." });
+    next(error);
   }
 });
 
-//GET /likes/comments/:commentId // Comment ID'ye göre beğenileri getir
-router.get("/comments/:commentId", limited, async (req, res) => {
+// GET /likes/comments/:commentId
+router.get("/comments/:commentId", limited, async (req, res, next) => {
   const commentId = req.params.commentId;
   try {
     const likes = await likeModel.getLikesByCommentId(commentId);
     res.json(likes);
   } catch (error) {
-    res.status(500).json({ message: "Beğenileri getirirken bir hata oluştu." });
+    next(error);
   }
 });
 
 // POST /likes
-router.post("/", limited, async (req, res) => {
+router.post("/", limited, async (req, res, next) => {
   const like = {
     user_id: req.decodedToken.subject,
     post_id: req.body.post_id || null,
@@ -40,12 +37,12 @@ router.post("/", limited, async (req, res) => {
     const newLike = await likeModel.createLike(like);
     res.status(201).json(newLike);
   } catch (error) {
-    res.status(500).json({ message: "Beğeni oluşturulurken bir hata oluştu." });
+    next(error);
   }
 });
 
 // DELETE /likes/:postId
-router.delete("/:postId", limited, async (req, res) => {
+router.delete("/:postId", limited, async (req, res, next) => {
   const postId = req.params.postId;
   try {
     const deletedLike = await likeModel.deleteLike(postId);
@@ -55,12 +52,12 @@ router.delete("/:postId", limited, async (req, res) => {
       res.status(404).json({ message: "Beğeni bulunamadı." });
     }
   } catch (error) {
-    res.status(500).json({ message: "Beğeni silinirken bir hata oluştu." });
+    next(error);
   }
 });
 
-// DELETE /likes/:commentId
-router.delete("/comments/:commentId", limited, async (req, res) => {
+// DELETE /likes/comments/:commentId
+router.delete("/comments/:commentId", limited, async (req, res, next) => {
   const commentId = req.params.commentId;
   try {
     const deletedLike = await likeModel.deleteLikeByCommentId(commentId);
@@ -70,8 +67,11 @@ router.delete("/comments/:commentId", limited, async (req, res) => {
       res.status(404).json({ message: "Beğeni bulunamadı." });
     }
   } catch (error) {
-    res.status(500).json({ message: "Beğeni silinirken bir hata oluştu." });
+    next(error);
   }
 });
+
+// Middleware'i ekle
+router.use(errorHandler);
 
 module.exports = router;
