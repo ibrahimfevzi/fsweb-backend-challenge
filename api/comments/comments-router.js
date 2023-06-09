@@ -78,7 +78,7 @@ router.delete("/:id", limited, async (req, res) => {
   const commentId = req.params.id;
   try {
     const deletedComment = await commentModel.deleteComment(commentId);
-    res.status(200).json(deletedComment);
+    res.status(200).json({ message: "Yorum silindi.", deletedComment });
   } catch (error) {
     res.status(500).json({ message: "Yorum silinirken bir hata oluştu." });
   }
